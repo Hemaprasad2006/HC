@@ -46,34 +46,61 @@ export const HealthPage: React.FC = () => {
   // Score state
   const [healthScore, setHealthScore] = useState<any>({ healthScore: 0, breakdown: { water: { score: 0 }, sleep: { score: 0 }, steps: { score: 0 } } });
 
+  const safeFormatDate = (dateStr: any, formatStr: string) => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return format(d, formatStr);
+    } catch (e) {
+      return '';
+    }
+  };
+
   const loadHealthData = async () => {
     try {
       setLoading(true);
       
       // Load water
       const waterData = await request('/health/water');
-      setWaterTotal(waterData.total);
-      setWaterHistory(waterData.weeklySummary);
+      if (waterData && typeof waterData === 'object') {
+        setWaterTotal(waterData.total || 0);
+        setWaterHistory(Array.isArray(waterData.weeklySummary) ? waterData.weeklySummary : []);
+      }
 
       // Load sleep
       const sleepData = await request('/health/sleep?range=7');
-      setSleepLogs(sleepData);
+      if (Array.isArray(sleepData)) {
+        setSleepLogs(sleepData);
+      } else {
+        setSleepLogs([]);
+      }
 
       // Load steps
       const stepsData = await request('/health/steps?range=7');
-      setStepsHistory(stepsData);
-      
-      const todayStr = new Date().toISOString().split('T')[0];
-      const todayStepsLog = stepsData.find((s: any) => s.loggedAt.split('T')[0] === todayStr);
-      setTodaySteps(todayStepsLog ? todayStepsLog.value : 0);
+      if (Array.isArray(stepsData)) {
+        setStepsHistory(stepsData);
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStepsLog = stepsData.find((s: any) => s.loggedAt && s.loggedAt.split('T')[0] === todayStr);
+        setTodaySteps(todayStepsLog ? todayStepsLog.value : 0);
+      } else {
+        setStepsHistory([]);
+        setTodaySteps(0);
+      }
 
       // Load weight
       const weightData = await request('/health/weight');
-      setWeightLogs(weightData);
+      if (Array.isArray(weightData)) {
+        setWeightLogs(weightData);
+      } else {
+        setWeightLogs([]);
+      }
 
       // Load health score
       const scoreData = await request('/health/score');
-      setHealthScore(scoreData);
+      if (scoreData && typeof scoreData === 'object') {
+        setHealthScore(scoreData);
+      }
 
     } catch (e: any) {
       toast.error(e.message || 'Error loading biometrics data');
@@ -374,7 +401,7 @@ export const HealthPage: React.FC = () => {
           <div className="h-36 w-full font-mono text-[9px] pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={sleepLogs} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-                <XAxis dataKey="loggedAt" tickFormatter={(str) => format(new Date(str), 'EEE')} stroke="#4A4A60" tickLine={false} />
+                <XAxis dataKey="loggedAt" tickFormatter={(str) => safeFormatDate(str, 'EEE')} stroke="#4A4A60" tickLine={false} />
                 <YAxis stroke="#4A4A60" label={{ value: 'Hours', angle: -90, position: 'insideLeft', fill: '#4A4A60' }} tickLine={false} />
                 <Tooltip
                   contentStyle={{
@@ -480,7 +507,7 @@ export const HealthPage: React.FC = () => {
             <div className="h-28 w-full font-mono text-[9px] pt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={weightLogs} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-                  <XAxis dataKey="loggedAt" tickFormatter={(str) => format(new Date(str), 'MMM dd')} stroke="#4A4A60" tickLine={false} />
+                  <XAxis dataKey="loggedAt" tickFormatter={(str) => safeFormatDate(str, 'MMM dd')} stroke="#4A4A60" tickLine={false} />
                   <YAxis stroke="#4A4A60" domain={['dataMin - 2', 'dataMax + 2']} tickLine={false} />
                   <Tooltip
                     contentStyle={{
