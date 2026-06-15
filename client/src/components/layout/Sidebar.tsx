@@ -22,9 +22,10 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from '
 interface SidebarProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
+  isMobileOpen?: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleCollapse }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleCollapse, isMobileOpen = false }) => {
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleCollapse })
 
   return (
     <aside
-      className={`fixed top-0 left-0 bottom-0 z-30 flex flex-col bg-bg-card border-r border-white/10 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'} md:translate-x-0 -translate-x-full md:relative`}
+      className={`fixed top-0 left-0 bottom-0 z-30 flex flex-col bg-bg-card border-r border-white/10 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'} md:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} md:relative`}
     >
       {/* Header / Logo */}
       <div className="flex items-center justify-between p-5 border-b border-white/10">

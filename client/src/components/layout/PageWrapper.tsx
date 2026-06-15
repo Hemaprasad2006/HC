@@ -83,6 +83,7 @@ export const PageWrapper: React.FC = () => {
         <Sidebar
           isCollapsed={isSidebarCollapsed}
           toggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          isMobileOpen={isMobileMenuOpen}
         />
         {/* Mobile menu backdrop */}
         {isMobileMenuOpen && (
