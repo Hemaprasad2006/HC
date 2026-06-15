@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: life-director-api
+    env: node
+    buildCommand: npm install && npm run build && npx prisma generate --schema=src/prisma/schema.prisma && npx prisma migrate deploy --schema=src/prisma/schema.prisma
+    startCommand: node dist/app.js

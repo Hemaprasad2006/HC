@@ -92,12 +92,8 @@ export const getDashboardSummary = async (req: AuthenticatedRequest, res: Respon
       if (h.frequency === 'daily') return true;
       if (h.frequency === 'weekly') return true;
       if (h.frequency === 'custom') {
-        try {
-          const days: number[] = JSON.parse(h.customDays);
-          return days.includes(dayOfWeek);
-        } catch (e) {
-          return false;
-        }
+        const days: number[] = h.customDays || [];
+        return days.includes(dayOfWeek);
       }
       return true;
     }).map(h => ({

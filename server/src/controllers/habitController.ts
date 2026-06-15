@@ -4,13 +4,7 @@ import prisma from '../prisma/prisma';
 import { startOfDay, subDays, isSameDay } from 'date-fns';
 import { sendPushToUser } from './pushController';
 
-// Helper to parse habit model customDays from string to array
-const formatHabit = (habit: any) => {
-  return {
-    ...habit,
-    customDays: habit.customDays ? JSON.parse(habit.customDays) : [],
-  };
-};
+// customDays is now a native array in PostgreSQL
 
 export const getHabits = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -31,7 +25,7 @@ export const getHabits = async (req: AuthenticatedRequest, res: Response) => {
       select: { remainingFreezes: true },
     });
 
-    const formattedHabits = habits.map(formatHabit);
+    const formattedHabits = habits;
 
     return res.status(200).json({
       habits: formattedHabits,
@@ -54,8 +48,6 @@ export const createHabit = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const customDaysStr = JSON.stringify(customDays || []);
-
     const newHabit = await prisma.habit.create({
       data: {
         userId,
@@ -64,14 +56,14 @@ export const createHabit = async (req: AuthenticatedRequest, res: Response) => {
         color,
         category,
         frequency,
-        customDays: customDaysStr,
+        customDays: customDays || [],
         reminderTime,
         streak: 0,
         longestStreak: 0,
       },
     });
 
-    return res.status(201).json(formatHabit(newHabit));
+    return res.status(201).json(newHabit);
   } catch (error: any) {
     console.error('Create habit error:', error);
     return res.status(500).json({ error: 'Server error creating habit' });
@@ -95,7 +87,7 @@ export const updateHabit = async (req: AuthenticatedRequest, res: Response) => {
     if (color !== undefined) updateData.color = color;
     if (category !== undefined) updateData.category = category;
     if (frequency !== undefined) updateData.frequency = frequency;
-    if (customDays !== undefined) updateData.customDays = JSON.stringify(customDays);
+    if (customDays !== undefined) updateData.customDays = customDays;
     if (reminderTime !== undefined) updateData.reminderTime = reminderTime;
     if (isArchived !== undefined) updateData.isArchived = isArchived;
 
@@ -104,7 +96,7 @@ export const updateHabit = async (req: AuthenticatedRequest, res: Response) => {
       data: updateData,
     });
 
-    return res.status(200).json(formatHabit(updated));
+    return res.status(200).json(updated);
   } catch (error: any) {
     console.error('Update habit error:', error);
     return res.status(500).json({ error: 'Server error updating habit' });
@@ -148,7 +140,7 @@ const recalculateHabitStreaks = async (habitId: string, userId: string) => {
 
   if (!habit) return { streak: 0, longestStreak: 0 };
 
-  const parsedCustomDays: number[] = habit.customDays ? JSON.parse(habit.customDays) : [];
+  const parsedCustomDays: number[] = habit.customDays || [];
   const completedDates = checkIns.map(c => startOfDay(new Date(c.date)));
   const frozenDates = freezeLogs.map(f => startOfDay(new Date(f.date)));
 
@@ -417,7 +409,7 @@ export const getHabitHistory = async (req: AuthenticatedRequest, res: Response) 
     });
 
     return res.status(200).json({
-      habit: formatHabit(habit),
+      habit: habit,
       checkIns: habit.checkIns,
       freezes: freezeLogs,
     });

@@ -91,7 +91,7 @@ export const getEvents = async (req: AuthenticatedRequest, res: Response) => {
     // Map habits (calculate scheduled days in the range)
     const days = eachDayOfInterval({ start: startDate, end: endDate });
     habits.forEach(h => {
-      const customDays: number[] = h.customDays ? JSON.parse(h.customDays) : [];
+      const customDays: number[] = h.customDays || [];
 
       days.forEach(day => {
         let isScheduled = false;

@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const API_BASE = __DEV__
   ? 'http://10.0.2.2:3000/api'  // Android emulator -> host machine
-  : 'https://life-director-prod.com/api';
+  : 'https://life-director-api.onrender.com/api';
 
 export const api = axios.create({
   baseURL: API_BASE,

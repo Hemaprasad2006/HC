@@ -2,12 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth';
 import prisma from '../prisma/prisma';
 
-const formatTask = (task: any) => {
-  return {
-    ...task,
-    tags: task.tags ? JSON.parse(task.tags) : [],
-  };
-};
+// tags is now a native array in PostgreSQL
 
 export const getTasks = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -26,8 +21,7 @@ export const getTasks = async (req: AuthenticatedRequest, res: Response) => {
       ],
     });
 
-    const formattedTasks = tasks.map(formatTask);
-    return res.status(200).json(formattedTasks);
+    return res.status(200).json(tasks);
   } catch (error: any) {
     console.error('Get tasks error:', error);
     return res.status(500).json({ error: 'Server error retrieving tasks' });
@@ -45,8 +39,6 @@ export const createTask = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(400).json({ error: 'Task title is required' });
     }
 
-    const tagsStr = JSON.stringify(tags || []);
-
     const createdTask = await prisma.task.create({
       data: {
         userId,
@@ -55,7 +47,7 @@ export const createTask = async (req: AuthenticatedRequest, res: Response) => {
         dueDate: dueDate ? new Date(dueDate) : null,
         priority: priority || 4,
         project,
-        tags: tagsStr,
+        tags: tags || [],
         isRecurring: isRecurring || false,
         recurrence,
         subtasks: subtasks && subtasks.length > 0 ? {
@@ -70,7 +62,7 @@ export const createTask = async (req: AuthenticatedRequest, res: Response) => {
       },
     });
 
-    return res.status(201).json(formatTask(createdTask));
+    return res.status(201).json(createdTask);
   } catch (error: any) {
     console.error('Create task error:', error);
     return res.status(500).json({ error: 'Server error creating task' });
@@ -100,7 +92,7 @@ export const updateTask = async (req: AuthenticatedRequest, res: Response) => {
     if (priority !== undefined) updateData.priority = priority;
     if (status !== undefined) updateData.status = status;
     if (project !== undefined) updateData.project = project;
-    if (tags !== undefined) updateData.tags = JSON.stringify(tags);
+    if (tags !== undefined) updateData.tags = tags;
     if (isRecurring !== undefined) updateData.isRecurring = isRecurring;
     if (recurrence !== undefined) updateData.recurrence = recurrence;
 
@@ -121,7 +113,7 @@ export const updateTask = async (req: AuthenticatedRequest, res: Response) => {
       },
     });
 
-    return res.status(200).json(formatTask(updated));
+    return res.status(200).json(updated);
   } catch (error: any) {
     console.error('Update task error:', error);
     return res.status(500).json({ error: 'Server error updating task' });
@@ -165,7 +157,7 @@ export const completeTask = async (req: AuthenticatedRequest, res: Response) => 
       include: { subtasks: true },
     });
 
-    return res.status(200).json(formatTask(updated));
+    return res.status(200).json(updated);
   } catch (error: any) {
     console.error('Complete task error:', error);
     return res.status(500).json({ error: 'Server error updating task status' });

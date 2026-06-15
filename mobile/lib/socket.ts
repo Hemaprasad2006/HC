@@ -7,7 +7,7 @@ export function connectFocusSocket(userId: string) {
 
   const baseUrl = __DEV__
     ? 'http://10.0.2.2:3000'
-    : 'https://life-director-prod.com';
+    : 'https://life-director-api.onrender.com';
 
   socket = io(baseUrl, {
     auth: { userId },

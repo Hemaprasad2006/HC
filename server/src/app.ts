@@ -28,7 +28,13 @@ const io = new Server(httpServer, {
   },
 });
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    process.env.CLIENT_URL || '',
+  ],
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes API Mapping
@@ -47,6 +53,10 @@ app.use('/api/push', pushRoutes);
 // Base Route
 app.get('/', (_req: Request, res: Response) => {
   res.send('Life Director API is running.');
+});
+
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Socket.io Real-Time Focus Session Synchronization

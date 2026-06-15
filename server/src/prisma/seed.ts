@@ -34,11 +34,11 @@ async function main() {
 
   console.log('Seeding habits...');
   const habitsData = [
-    { name: 'Morning Meditation', emoji: '🧘', color: '#6C63FF', category: 'Mind', frequency: 'daily', customDays: '[]', reminderTime: '07:30' },
-    { name: 'Drink 3L Water', emoji: '💧', color: '#00D4AA', category: 'Health', frequency: 'daily', customDays: '[]', reminderTime: '09:00' },
-    { name: 'Read 15 Pages', emoji: '📚', color: '#FFD166', category: 'Mind', frequency: 'custom', customDays: '[1,2,3,4,5]', reminderTime: '21:00' }, // Mon-Fri
-    { name: 'Strength Training', emoji: '🏋️', color: '#FF6B6B', category: 'Body', frequency: 'custom', customDays: '[1,3,5]', reminderTime: '18:00' }, // Mon, Wed, Fri
-    { name: 'Gratitude Journal', emoji: '✍️', color: '#6C63FF', category: 'Mind', frequency: 'daily', customDays: '[]', reminderTime: '22:30' },
+    { name: 'Morning Meditation', emoji: '🧘', color: '#6C63FF', category: 'Mind', frequency: 'daily', customDays: [] as number[], reminderTime: '07:30' },
+    { name: 'Drink 3L Water', emoji: '💧', color: '#00D4AA', category: 'Health', frequency: 'daily', customDays: [] as number[], reminderTime: '09:00' },
+    { name: 'Read 15 Pages', emoji: '📚', color: '#FFD166', category: 'Mind', frequency: 'custom', customDays: [1, 2, 3, 4, 5], reminderTime: '21:00' }, // Mon-Fri
+    { name: 'Strength Training', emoji: '🏋️', color: '#FF6B6B', category: 'Body', frequency: 'custom', customDays: [1, 3, 5], reminderTime: '18:00' }, // Mon, Wed, Fri
+    { name: 'Gratitude Journal', emoji: '✍️', color: '#6C63FF', category: 'Mind', frequency: 'daily', customDays: [] as number[], reminderTime: '22:30' },
   ];
 
   const habits = [];
@@ -99,11 +99,11 @@ async function main() {
 
   console.log('Seeding tasks...');
   const tasksData = [
-    { title: 'Deport Weekly Metrics to Team', status: 'done', priority: 1, dueDate: today, project: 'Work', tags: '["metrics", "report"]' },
-    { title: 'Design Glassmorphism Dashboard Layout', status: 'in_progress', priority: 1, dueDate: today, project: 'Life Director', tags: '["design", "frontend"]' },
-    { title: 'Integrate Web Push Notifications API', status: 'todo', priority: 2, dueDate: new Date(today.getTime() + 24 * 60 * 60 * 1000), project: 'Life Director', tags: '["pwa", "service-worker"]' },
-    { title: 'Write Prisma SQLite Migration and Schemas', status: 'done', priority: 3, dueDate: subDays(today, 1), project: 'Life Director', tags: '["database", "backend"]' },
-    { title: 'Schedule Dental Checkup Visit', status: 'todo', priority: 4, dueDate: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000), project: 'Health', tags: '["wellness"]' },
+    { title: 'Deport Weekly Metrics to Team', status: 'done', priority: 1, dueDate: today, project: 'Work', tags: ["metrics", "report"] },
+    { title: 'Design Glassmorphism Dashboard Layout', status: 'in_progress', priority: 1, dueDate: today, project: 'Life Director', tags: ["design", "frontend"] },
+    { title: 'Integrate Web Push Notifications API', status: 'todo', priority: 2, dueDate: new Date(today.getTime() + 24 * 60 * 60 * 1000), project: 'Life Director', tags: ["pwa", "service-worker"] },
+    { title: 'Write Prisma SQLite Migration and Schemas', status: 'done', priority: 3, dueDate: subDays(today, 1), project: 'Life Director', tags: ["database", "backend"] },
+    { title: 'Schedule Dental Checkup Visit', status: 'todo', priority: 4, dueDate: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000), project: 'Health', tags: ["wellness"] },
   ];
 
   for (const t of tasksData) {
