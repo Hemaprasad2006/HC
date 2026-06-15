@@ -15,6 +15,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, Cell, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts';
+import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
 export const HealthPage: React.FC = () => {
@@ -167,6 +168,33 @@ export const HealthPage: React.FC = () => {
     return null;
   };
 
+  const getWaterScore = () => {
+    const w = healthScore?.breakdown?.water;
+    if (!w) return 0;
+    if (w.score !== undefined) return w.score;
+    const goal = w.goal || 2000;
+    const amount = w.amount || 0;
+    return goal > 0 ? Math.round(Math.min(amount / goal, 1) * 100) : 0;
+  };
+
+  const getSleepScore = () => {
+    const s = healthScore?.breakdown?.sleep;
+    if (!s) return 0;
+    if (s.score !== undefined) return s.score;
+    const goal = s.goal || 8;
+    const hours = s.hours || 0;
+    return goal > 0 ? Math.round(Math.min(hours / goal, 1) * 100) : 0;
+  };
+
+  const getStepsScore = () => {
+    const st = healthScore?.breakdown?.steps;
+    if (!st) return 0;
+    if (st.score !== undefined) return st.score;
+    const goal = st.goal || 8000;
+    const count = st.count || 0;
+    return goal > 0 ? Math.round(Math.min(count / goal, 1) * 100) : 0;
+  };
+
   if (loading && waterHistory.length === 0) {
     return <SkeletonLoader type="card" className="h-[500px]" />;
   }
@@ -188,9 +216,9 @@ export const HealthPage: React.FC = () => {
             <span className="text-[8px] uppercase tracking-wider text-text-secondary font-bold mt-1">Composite</span>
           </Progress>
           <div className="flex gap-3 text-[10px] font-mono text-text-secondary mt-4">
-            <div>💧 {healthScore.breakdown.water.score}%</div>
-            <div>🛌 {healthScore.breakdown.sleep.score}%</div>
-            <div>🚶 {healthScore.breakdown.steps.score}%</div>
+            <div>💧 {getWaterScore()}%</div>
+            <div>🛌 {getSleepScore()}%</div>
+            <div>🚶 {getStepsScore()}%</div>
           </div>
         </Card>
 
@@ -215,7 +243,7 @@ export const HealthPage: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-accent-primary">✓</span>
-              <span>Sleep Score: {healthScore.breakdown.sleep.score} / 100</span>
+              <span>Sleep Score: {getSleepScore()} / 100</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-accent-gold">✓</span>
