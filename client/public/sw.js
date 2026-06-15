@@ -21,6 +21,7 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   if (!e.request.url.startsWith('http')) return;
   if (e.request.url.includes('@vite') || e.request.url.includes('@fs')) return;
+  if (e.request.url.includes('/api/')) return; // Do not intercept API requests
 
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
