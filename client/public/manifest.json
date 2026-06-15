@@ -1,0 +1,15 @@
+{
+  "short_name": "LifeDirector",
+  "name": "Life Director — Your life, orchestrated.",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0A0A0F",
+  "background_color": "#0A0A0F"
+}
