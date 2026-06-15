@@ -1,4 +1,4 @@
-const CACHE_NAME = 'life-director-cache-v1';
+const CACHE_NAME = 'life-director-cache-v2'; // Bumped version to invalidate old caches
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -7,6 +7,7 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting(); // Force active activation of updated service worker
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
@@ -15,7 +16,21 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(self.clients.claim());
+  e.waitUntil(
+    Promise.all([
+      self.clients.claim(),
+      // Clear all legacy service worker caches
+      caches.keys().then((keys) => {
+        return Promise.all(
+          keys.map((key) => {
+            if (key !== CACHE_NAME) {
+              return caches.delete(key);
+            }
+          })
+        );
+      }),
+    ])
+  );
 });
 
 self.addEventListener('fetch', (e) => {
@@ -28,10 +43,11 @@ self.addEventListener('fetch', (e) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(e.request).catch(() => {
+      return fetch(e.request).catch((err) => {
         if (e.request.mode === 'navigate') {
           return caches.match('/');
         }
+        throw err; // Re-throw so it rejects properly instead of returning undefined
       });
     })
   );
