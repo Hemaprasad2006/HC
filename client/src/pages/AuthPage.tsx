@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { BASE_URL } from '../lib/api';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { KeyRound, Mail, User as UserIcon, ShieldAlert } from 'lucide-react';
@@ -41,7 +42,7 @@ export const AuthPage: React.FC = () => {
     const endpoint = isLogin ? '/auth/login' : '/auth/signup';
     
     try {
-      const res = await fetch(`http://localhost:3000/api${endpoint}`, {
+      const res = await fetch(`${BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name }),

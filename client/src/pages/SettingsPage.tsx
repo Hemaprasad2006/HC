@@ -6,7 +6,7 @@ import { Tabs } from '../components/ui/Tabs';
 import { Dropdown } from '../components/ui/Dropdown';
 import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
-import { request } from '../lib/api';
+import { request, BASE_URL } from '../lib/api';
 import {
   User as UserIcon,
   Settings as SettingsIcon,
@@ -64,13 +64,13 @@ export const SettingsPage: React.FC = () => {
   const handleExportICS = () => {
     const token = useAuthStore.getState().accessToken;
     // Download standard .ics file from server endpoint
-    window.open(`http://localhost:3000/api/events/export?token=${token}`, '_blank');
+    window.open(`${BASE_URL}/events/export?token=${token}`, '_blank');
     toast.success('iCal export completed! Check downloads.');
   };
 
   const handleExportJSON = async () => {
     const token = useAuthStore.getState().accessToken;
-    window.open(`http://localhost:3000/api/user/export?token=${token}`, '_blank');
+    window.open(`${BASE_URL}/user/export?token=${token}`, '_blank');
     toast.success('JSON backup exported!');
   };
 

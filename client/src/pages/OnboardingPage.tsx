@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { BASE_URL } from '../lib/api';
 import { useThemeStore } from '../store/themeStore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -80,7 +81,7 @@ export const OnboardingPage: React.FC = () => {
     // 1. Save onboarding habit to backend database
     try {
       const token = useAuthStore.getState().accessToken;
-      await fetch('http://localhost:3000/api/habits', {
+      await fetch(`${BASE_URL}/habits`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { useAuthStore } from './authStore';
+import { BASE_URL } from '../lib/api';
 
 export interface AppNotification {
   id: string;
@@ -37,7 +38,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   fetchNotifications: async () => {
     try {
       set({ isLoading: true });
-      const res = await fetch('http://localhost:3000/api/notifications', {
+      const res = await fetch(`${BASE_URL}/notifications`, {
         headers: getHeaders(),
       });
       if (res.ok) {
@@ -53,7 +54,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   markRead: async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/notifications/${id}/read`, {
+      const res = await fetch(`${BASE_URL}/notifications/${id}/read`, {
         method: 'PATCH',
         headers: getHeaders(),
       });
@@ -69,7 +70,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   markAllRead: async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/notifications/read-all', {
+      const res = await fetch(`${BASE_URL}/notifications/read-all`, {
         method: 'PATCH',
         headers: getHeaders(),
       });
@@ -84,7 +85,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   deleteNotification: async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/notifications/${id}`, {
+      const res = await fetch(`${BASE_URL}/notifications/${id}`, {
         method: 'DELETE',
         headers: getHeaders(),
       });
