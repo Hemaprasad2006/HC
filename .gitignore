@@ -31,3 +31,7 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Temporary build logs and scratch scripts
+**/eas-log*
+scratch/
